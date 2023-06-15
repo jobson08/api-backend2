@@ -11,14 +11,14 @@ datasource db {
 }
 
 model User {
-  id             String   @id @default(uuid())
-  name            String 
-  email           String   @unique 
-  password        String
-  avata           String?
-  enabled         Boolean //(Active, Inactive) 
+  id            String   @id @default(uuid())
+  name          String 
+  email         String   @unique 
+  password      String
+  avata_url     String?
+  enabled       Boolean?  //(Active, Inactive) 
   createdAt     DateTime    @default(now())
   updatedAt     DateTime    @updatedAt
 
-   @@map("user")
+ //  @@map("user")
 }
