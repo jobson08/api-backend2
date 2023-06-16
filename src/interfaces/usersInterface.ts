@@ -3,3 +3,19 @@ export interface Icreate {
     email: string
     password: string
 }
+
+export interface IUpdate {
+    name: string;
+    oldPassword: string;
+    newPassword: string;
+    avata_url?: FileUpload;
+}
+
+interface FileUpload {
+    fieldname: string;
+    originalname: string;
+    encoding: string;
+    mimetype: string;
+    buffer: Buffer;
+    size: number;
+}

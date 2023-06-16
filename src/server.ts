@@ -2,7 +2,6 @@ import express, { NextFunction, Request, Response } from 'express';
 import dotenv from 'dotenv';
 import cors from 'cors'
 import { UserRoutes } from './routes/UserRoutes';
-import multer from 'multer';
 
 dotenv.config();
 
@@ -15,8 +14,8 @@ app.use(cors({
 app.use(express.json());
 
 const userRoutes = new UserRoutes().getRoutes();
-const upload = multer();
-app.use('/user', upload.any(), userRoutes)
+
+app.use('/user', userRoutes)
 
 app.use((err:Error, request: Request, response: Response, next: NextFunction) => {
     if (err instanceof Error){
