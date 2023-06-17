@@ -1,9 +1,9 @@
-import { hash } from "bcrypt"
+import { compare, hash } from "bcrypt"
 import { IUpdate, Icreate } from "../interfaces/usersInterface"
 import { UserRepository } from "../repositories/UserRepository"
 import { v4 as uuid } from 'uuid';
 import { s3 } from "../config/aws";
-import { randomUUID } from "crypto"
+import{sign} from "jsonwebtoken"
 
 class UserServices {
     private userRepository: UserRepository
@@ -35,6 +35,34 @@ class UserServices {
         })
         .promise();
         console.log('url imegns' , uploadS3.Location)
+    }
+
+   async auth( email: string, password: string){
+        const findUser = await this.userRepository.findUserByEmail(email);
+        if (!findUser) {
+            throw new Error('User or password invalid')
+        }
+        const passwordMatch = compare(password, findUser.password);
+
+        if (!passwordMatch) {
+            throw new Error('User or password invalid')
+        }
+
+        let secretKey: string | undefined = process.env.ACCESS_KEY_TOKEN
+            if (!secretKey){
+                throw new Error('token não encontrado')
+            }
+        const token = sign({ email }, secretKey, {
+            subject: findUser.id,
+            expiresIn: 60 * 15,
+        });
+        return {
+            token,
+            user: {
+                name: findUser.name,
+                email: findUser.email,
+            },
+        }
     }
 }
 

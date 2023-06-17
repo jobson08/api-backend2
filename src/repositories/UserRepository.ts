@@ -28,9 +28,12 @@ class UserRepository{
 
             },
             data: {
-
+                name,
+                password: newPassword, 
+                avata_url,
             },
-        })
+        });
+        return result;
     }
 }
 

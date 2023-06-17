@@ -37,8 +37,14 @@ class UserController {
     }
 
      //autenticação
-    auth(){
-       
+   async auth(request: Request, response: Response, next: NextFunction){
+        const { email, password } = request.body
+       try{
+        const result = await this.userServices.auth(email, password);
+        return response.json(result);
+       }catch (error){
+        next(error);
+       }
     }
 }
 
