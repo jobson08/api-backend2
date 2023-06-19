@@ -22,18 +22,38 @@ class UserRepository{
         });
         return result;
     }
-    async update( name: string, newPassword: string, avata_url: string ){
+
+    //verifiva se u usuario ja existe
+    async findUserById(id: string){
+        const result = await prisma.user.findUnique({
+            where: {
+                id,
+            },
+        });
+        return result;
+    }
+    async update( name: string,  avata_url: string, user_id: string ){
         const result = await prisma.user.update({
             where: {
-
+                id: user_id,
             },
             data: {
                 name,
-                password: newPassword, 
                 avata_url,
             },
         });
         return result;
+    }
+    //atualizar nava senha
+    async updatePassword( newPassword: string, user_id: string){
+        const result = await prisma.user.update({
+            where:{
+                id: user_id,
+            },
+            data: {
+                password: newPassword,
+            }
+        })
     }
 }
 
