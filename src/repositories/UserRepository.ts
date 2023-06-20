@@ -13,7 +13,7 @@ class UserRepository{
         });
         return result;
     }
-    //verifiva se u usuario ja existe
+    //verifiva se u Email ja existe
     async findUserByEmail(email: string){
         const result = await prisma.user.findUnique({
             where: {
@@ -44,7 +44,7 @@ class UserRepository{
         });
         return result;
     }
-    //atualizar nava senha
+    //atualizar nova senha
     async updatePassword( newPassword: string, user_id: string){
         const result = await prisma.user.update({
             where:{

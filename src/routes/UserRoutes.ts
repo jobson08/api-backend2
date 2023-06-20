@@ -19,7 +19,7 @@ class UserRoutes {
         //editar
         this.router.put('/', upload.single('avata_url'),
         this.authMiddleware.auth.bind(this.authMiddleware),
-            this.usersController.update.bind(this.usersController),
+        this.usersController.update.bind(this.usersController),
         );
         //login
         this.router.post('/auth', this.usersController.auth.bind(this.usersController))

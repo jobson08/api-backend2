@@ -29,7 +29,13 @@ class UserController {
         const { name, oldPassword, newPassword} = request.body;
         const { user_id } = request;
         try{
-            const result = await this.userServices.update( {name, oldPassword, newPassword, avata_url:request.file, user_id});
+            const result = await this.userServices.update( {
+                name, 
+                oldPassword, 
+                newPassword, 
+                avata_url:request.file, 
+                user_id
+            });
             return response.status(200).json(result);
         }catch (error){
         

@@ -11,19 +11,21 @@ class UserServices {
     constructor() {
         this.userRepository = new UserRepository()
     }
+    //criar
     async create({ name, email, password }: Icreate) {
 
         const findUser = await this.userRepository.findUserByEmail(email)
 
         if (findUser) {
-            throw new Error('User existe')
+            throw new Error('Usuario já existe')
         }
 
         const hashPassword = await hash(password, 10);
 
-        const create = await this.userRepository.create({ name, email, password });
+        const create = await this.userRepository.create({ name, email, password: hashPassword, });
         return create;
     }
+    //Atualizar
     async update({ name, oldPassword, newPassword, avata_url, user_id }: IUpdate) {
         //caso o usuario passe  a senha
         let password
@@ -37,9 +39,9 @@ class UserServices {
                 throw new Error('Senha invalido');
             }
             password = await hash(newPassword, 10);
-            await this.userRepository.updatePassword(newPassword, user_id,);
+            await this.userRepository.updatePassword(password, user_id,);
         }
-// caso o usuario passe a imagens 
+        // caso o usuario passe a imagens 
         if (avata_url) {
             const uploadImage = avata_url?.buffer;
             const uploadS3 = await s3
@@ -54,19 +56,22 @@ class UserServices {
             await this.userRepository.update(name, uploadS3.Location, user_id)
         }
         return {
+            user_id:{
+                name
+            },
             message: 'usuario atualizado com sucesso',
         }
     }
-
+    //login
     async auth(email: string, password: string) {
         const findUser = await this.userRepository.findUserByEmail(email);
         if (!findUser) {
-            throw new Error('User or password invalid')
+            throw new Error('Email ou senha ivalido')
         }
-        const passwordMatch = compare(password, findUser.password);
+        const passwordMatch = await compare(password, findUser.password);
 
         if (!passwordMatch) {
-            throw new Error('User or password invalid')
+            throw new Error('Email ou senha ivalido')
         }
 
         let secretKey: string | undefined = process.env.ACCESS_KEY_TOKEN
@@ -75,7 +80,7 @@ class UserServices {
         }
         const token = sign({ email }, secretKey, {
             subject: findUser.id,
-            expiresIn: 60 * 15,
+            expiresIn:'8h',
         });
         return {
             token,
