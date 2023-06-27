@@ -14,7 +14,7 @@ class AuthMiddleware {
         const [, token] = authHeader.split(' ');
         let secretKey: string | undefined = process.env.ACCESS_KEY_TOKEN
         if (!secretKey) {
-            throw new Error('token não encontrado')
+            throw new Error('token não Valido')
         }
         try {
             const { sub }= verify(token, secretKey) as IPayload;

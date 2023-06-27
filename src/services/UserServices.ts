@@ -3,7 +3,7 @@ import { IUpdate, Icreate } from "../interfaces/usersInterface"
 import { UserRepository } from "../repositories/UserRepository"
 import { v4 as uuid } from 'uuid';
 import { s3 } from "../config/aws";
-import { sign } from "jsonwebtoken"
+import { sign, verify } from "jsonwebtoken"
 
 class UserServices {
     private userRepository: UserRepository
@@ -80,15 +80,40 @@ class UserServices {
         }
         const token = sign({ email }, secretKey, {
             subject: findUser.id,
-            expiresIn:'8h',
+            expiresIn: 60 * 15,
         });
+        //atualiza o token a cada 15 minutospega o token atigo compra e atualisa
+        const refreshToken = sign({ email }, secretKey, {
+            subject: findUser.id,
+            expiresIn: '7d',
+        });
+
         return {
             token,
+            refresh_token: refreshToken,
             user: {
                 name: findUser.name,
                 email: findUser.email,
             },
         }
+    }
+    //atualiza token a cada 15 minitos
+    async refresh(refresh_token: string){
+      if (!refresh_token) {
+        throw new Error('Refresh token ausente');
+      }  
+      let secretKey: string | undefined = process.env.ACCESS_KEY_TOKEN
+      if (!secretKey) {
+          throw new Error('não há token de atualização não chave');
+      }
+      const verifyRefrechToken = verify(refresh_token, secretKey);
+
+      const {sub} = verifyRefrechToken;
+
+      const newToken = sign({sub}, secretKey, {
+        expiresIn: 60 * 15,
+      });
+       return {token: newToken};
     }
 }
 

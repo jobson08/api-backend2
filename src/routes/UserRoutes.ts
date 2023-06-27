@@ -8,7 +8,7 @@ class UserRoutes {
     private usersController: UserController;
     private authMiddleware = new AuthMiddleware;
     constructor() {
-        this.router = Router();
+        this.router = Router(); 
         this.usersController = new UserController();
         this.authMiddleware = new AuthMiddleware();
     } 
@@ -22,7 +22,8 @@ class UserRoutes {
         this.usersController.update.bind(this.usersController),
         );
         //login
-        this.router.post('/auth', this.usersController.auth.bind(this.usersController))
+        this.router.post('/auth', this.usersController.auth.bind(this.usersController));
+        this.router.post('/refesh', this.usersController.refresh.bind(this.usersController));
         return this.router
     }
 }
